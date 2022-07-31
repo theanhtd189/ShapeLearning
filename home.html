@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>Trang chủ</title>
+</head>
+<body>
+  <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+<div id='stars'></div>
+<div id='stars2'></div>
+<div id='stars3'></div>
+
+  <h2 class="heading" id="heading"></h2>
+    <ul class="honeycomb" lang="es">   
+        <!-- <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/1">
+          <div class="honeycomb-cell__title">Hình vuông</div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/2">
+          <div class="honeycomb-cell__title">Impermeables</div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/3">
+          <div class="honeycomb-cell__title">Tablero doble cara</div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/4">
+          <div class="honeycomb-cell__title">Maletín de empaque</div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/5">
+          <div class="honeycomb-cell__title">Antireflectivo<small>No vidrio</small></div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/6">
+          <div class="honeycomb-cell__title">6 fichas<small>1 de repuesto</small></div>
+        </li>
+        <li class="honeycomb-cell">
+          <img class="honeycomb-cell__image" src="https://source.unsplash.com/random/7">
+          <div class="honeycomb-cell__title">Tablero magnético</div>
+        </li> -->
+        
+      </ul>
+</body>
+</html>
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/data.js"></script>
+<script>
+  $(document).ready(function () {
+    var tab = $(".honeycomb");
+    var arr = database;
+    var heading = $("#heading").text("Mời bạn chọn loại hình muốn học");
+     
+    console.log(arr.length)
+    for(var i = 0; i < arr.length; i++){
+      var _this = arr[i];
+      var _li = $("<a/>");
+      _li.addClass("honeycomb-cell");
+      _li.attr("data-name", _this.Name);
+      _li.attr("href","hinh.html?shape="+_this.Shape_ID);
+      
+
+      var _img = $("<img/>");
+      _img.addClass("honeycomb-cell__image");
+      _img.attr("src", _this.Url );
+
+      var _div = $("<div/>");
+      _div.addClass("honeycomb-cell__title");
+      _div.text(_this.Name);
+
+      _li.append(_img);
+      _li.append(_div);
+      tab.append(_li);
+    }
+    if(arr.length %2 !=0 ){
+      tab.append(('<li class="honeycomb-cell honeycomb__placeholder"></li>'));
+    }
+
+
+    $(".honeycomb-cell").hover(function(){
+        $("#heading").text($(this).data("name"));
+      })
+      $(".honeycomb-cell").mouseleave(function(){
+        $("#heading").text("Mời bạn chọn loại hình muốn học");
+      })
+  })
+</script>

@@ -1,0 +1,345 @@
+ @import url("https://fonts.googleapis.com/css?family=Work+Sans:800");
+ @import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500&display=swap");
+
+ ::webkit-scrollbar {
+    width: 0;
+ }
+ body {
+     background: #2d25be; 
+     outline: 0;
+ }
+
+ /* .shape {
+      position: fixed; 
+     bottom: 0px;
+     right: 0px;
+     width: 50%;
+     height: 100%;
+     background: #e01a0c;
+     -webkit-clip-path: circle(30%);
+     clip-path: circle(30%);
+     z-index: -1;
+     transition: all 2s ease;
+ } */
+
+ #container {
+    min-height: 350px;
+    width: 80%;
+    border-right: 2rem solid #e21a1a;
+    margin: 10% auto;
+    border-left: 2rem solid #aae929;
+    border-top: 2rem solid #aae929;
+    border-bottom: 2rem solid #e03636;
+    position: relative;
+    border-radius: 11px;
+    padding-bottom: 2.4rem;
+    transition: .5s;
+    background: white;
+ }
+
+ .navbar {
+     display: inline-block;
+     margin-top: 2.4em;
+     font-family: 'Work Sans';
+     font-size: 70%;
+     margin-bottom: -55px;
+ }
+
+ .navbar a {
+     padding: 12px;
+     margin-left: 10px;
+     border-radius: 25px;
+     text-decoration: none;
+     text-transform: uppercase;
+     letter-spacing: 2px;
+     color: #433449;
+     cursor: pointer;
+ }
+ .navbar a.active {
+    background: blue;
+    color: white;
+    transition: .5s;
+ }
+
+ .navbar a:hover {
+     transition: 0.5s;
+     color: blue;
+ }
+
+ #title {
+     transition: all 2s ease;
+     font-family: "Work Sans", sans-serif;
+     color: #e01a0c;
+     text-transform: uppercase;
+     font-size: 2.7em;
+     text-shadow: 2px 1px 0px rgba(67, 52, 73, 0.9);
+     /* margin-top: 10%; */
+     margin-left: 5%;
+     max-width: 50%;
+ }
+
+ .heading_name {
+     font-size: 1em;
+     text-transform: uppercase;
+     letter-spacing: 3px;
+     font-family: "Frank Ruhl Libre", serif;
+     color: #433449;
+     margin-top: -2rem;
+     margin-left: 2rem;
+     max-width: 50%;
+     font-weight: 900;
+ }
+
+ .emph {
+     background-color: #e3ff44;
+ }
+
+ .change {
+     margin-top: 40px;
+ }
+
+ .button {
+     margin-left: 90%;
+     margin-top: -40px;
+     width: 15px;
+     height: 15px;
+     border-radius: 50%;
+     box-shadow: 2px 5px 5px 2px rgba(67, 52, 73, 0.4);
+ }
+
+ .button:hover {
+     transform: scale(1.7);
+     transition: all 1s ease;
+ }
+
+ #green {
+     background: #8cce8c;
+ }
+
+ #red {
+     background: #e01a0c;
+ }
+
+ #blue {
+     background: #487ea2;
+ }
+
+ #purple {
+     background: #ba3cec;
+ }
+
+ .last-button {
+     max-width: 100px;
+     margin-left: 50%;
+     margin-top: 5%;
+ }
+
+ .last-button a {
+     background: #433449;
+     color: #e3ff44;
+     padding: 10px;
+     text-decoration: none;
+     border-radius: 25px;
+ }
+
+ .last-button a:hover {
+     color: #433449;
+     background: #e3ff44;
+     transition: all 0.5s ease;
+ }
+ .p-content {
+    padding: 2px 20px;
+    color:black;
+    margin-top: 2rem;
+    font-size: 25px;
+ }
+ button, button>a {
+    border:none;
+    outline: 0, im !important;;
+ }
+ a {
+    text-decoration: none!important;
+    outline: 0;
+ }
+ #back {
+    position: absolute;
+    top: 8rem;
+    color: chartreuse;
+    background: black;
+    border-width: 3.1px;
+    left: 2rem;
+    border-color: floralwhite;
+ }
+
+ #info {
+    position: absolute;
+    top: 2rem;
+    color: black;
+    left: 2rem;
+    background: white;
+ }
+
+ .main {
+    display: flex;
+    /* position: relative; */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+ }
+ .shape {
+    right: 5rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    /* background: #ff00000d; */
+ }
+ .square {
+    width: 250px;
+    background-repeat: no-repeat;
+    height: 250px;
+    background-size: contain;
+    background-image: url(../images/hinhvuong.gif);
+    /* background-color: transparent; */
+ }
+ .circle {
+    width: 200px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-size: 500px;
+    height: 200px;
+    background-position: 52.5% 45%;
+    /* background-size: contain; */
+    background-image: url(../images/hinhtron.gif);
+}
+ .triangle {
+    width: 250px;
+    background-size: 440px;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 200px;
+    /* background-size: contain; */
+    background-image: url(../images/tamgiac.gif);
+}
+ .rectangle {
+    width: 250px;
+    background-repeat: no-repeat;
+    height: 250px;
+    background-size: contain;
+    background-image: url(../images/hinhcn.gif);
+
+ }
+ .parallelogram {
+    width: 250px;
+    background-repeat: no-repeat;
+    height: 200px;
+    background-size: contain;
+    background-image: url(../images/hinhthang.gif);
+}
+ .shape.trapezoid {
+    border-bottom: 120px solid #ec1111;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    height: 0;
+    width: 150px;
+    background: transparent; 
+    transition: .5s;
+    animation: hinhthang 2s infinite both; 
+ }
+ @keyframes hinhthang {
+    0% {
+        border-bottom: 120px solid #464eeb;
+        transform: skewY(0deg);
+    }
+    25% {
+        transform: skewY(5deg);
+    }
+    50% {
+        transform: skewY(0);
+    }
+    75% {
+        transform: skewY(-5deg);
+    }
+    100% {
+        border-bottom: 120px solid #e53939;
+        transform: skewY(0deg);
+    }
+ }
+ .rhombus {
+    width: 250px;
+    background-repeat: no-repeat;
+    height: 250px;
+    background-size: contain;
+    background-image: url(../images/hinhthoi.gif);
+  }
+  .hinhlapphuong {
+    width: 250px;
+    height: 250px;
+    background-image: url(../images/hinhlapphuong.gif);
+  }
+  .hinhhopchunhat {
+    background-image: url(https://i.gifer.com/CdP9.gif);
+    width: 450px;
+    height: 350px;
+    background-repeat: no-repeat;
+    background-size: 111%;
+  }
+  .hinhtru {
+    width: 250px;
+    height: 250px;
+    background-position: center;
+    background-size: 120%;
+    background-image: url(https://i.gifer.com/LLWH.gif);
+  }
+  .hinhcau {
+    background-image: url(https://i.gifer.com/1dUF.gif);
+    width: 250px;
+    height: 250px;
+    background-position: center;
+    background-size: 120%;
+  }
+  a.btn {
+    border: .5px solid #00000042;
+    transition: .5s;
+    }
+    a.btn:hover {
+        transition:.5s;
+        background-color:blue;
+        color:white;
+        border: 1px solid transparent;
+    }
+.wrap {
+    display: flex;
+
+}
+.wrap>.item{
+    width: 50%;
+}
+img {
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+}
+.shapeList input[type="text"] {
+    outline: 0;
+    color: #fd2020;
+    width: 50%;
+    border-right: none;
+    border-top: none;
+    font-size: 2rem;
+    border-bottom: 3px solid #de0036;
+    border-left: 3px solid #5d5de4;
+}
+.shapeList p {
+    /* width: 450px; */
+    display: flex;
+    justify-content: space-between;
+}
+.wrap {
+    display: flex;
+}
+.ShapeBtn, .shapeList {
+    width: 50%;
+
+}
+.ShapeBtn {
+    text-align: center;
+}

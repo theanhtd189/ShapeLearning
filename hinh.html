@@ -1,0 +1,184 @@
+<html lang="en" class="">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/animate.min.css">
+    <link rel="stylesheet" href="/assets/css/shape_style.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+</head>
+
+<body>
+    <a class="btn" id="back" href="home.html">
+        <i class="fas fa-arrow-circle-left"></i>
+        Trở về
+    </a>
+    <a class="btn" id="info" onclick="location.href='index.html'">
+        <!-- <img src="assets/images/info.gif"></img> -->
+        <i class="fas fa-info-circle"></i>
+        <!-- <a href="index.html"> </a> -->
+        Thông tin phần mềm
+    </a>
+
+    <div id="container">
+        <nav class="navbar">
+            <a data-href="#Defination"><i class="fas fa-info-circle"></i> Đặc điểm </a>
+            <a data-href="#Formula"><i class="fas fa-square"></i> Công thức</a>
+            <a data-href="#ShapeObject"><i class="fas fa-clone"></i> Áp dụng</a>
+            <!-- <a data-href="#Volume"><i class="fas fa-layer-group"></i> Thể tích</a> -->
+        </nav>
+        <div class="section">
+
+            <div class="main">
+                <p id="title" style="color: rgb(140, 206, 140);"></p>
+                <div id="shape" class="shape"></div>
+            </div>
+            <h2 class="heading_name"></h2>
+            <div id="content">
+                <div class="p-content" id="Defination" style="display: none;"></div>
+                <div class="p-content" id="Formula" style="display: none;">
+                </div>
+                <div class="p-content" id="ShapeObject" style="display: none;">
+                    <h3 class="shape-name"></h3>
+                    <div class="wrap">
+                        <div class="ShapeList">
+                        </div>
+                        <div class="ShapeBtn">                      
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- <div class="last-button">
+            <a id="lb-chng" href="#" style="background-color: rgb(140, 206, 140);"><i class="fas fa-play"></i> Làm toán
+            </a>
+        </div> -->
+    </div>
+    <script src="/assets/js/jquery.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script>
+        $(document).ready(function () {
+            
+
+            var db = database;
+            var currentLocation = window.location;
+            var obj = null;
+            var ok = false;
+
+            // console.log(currentLocation)
+            var _url = decodeURI(currentLocation.search).split("shape=");
+            if (_url.length > 0 && _url[0] == "?" && _url[1] != "") {
+                var _name = _url[1];
+                db.forEach(function (e) {
+                    // console.log(e)
+                    if (e.Shape_ID == _name) {
+                        ok = true;
+                        // console.log('found ')
+                        // console.log(e)
+                        obj = e;
+                        $(document).prop('title', e.Name);
+                        $("#title").text(e.Name);
+                        $("#title").css('color', e.Color);
+                        $("#shape").addClass(e.Shape_ID);
+
+
+                        var listName = ["Defination", "Formula", "Practice"];
+                        for (var i = 0; i < listName.length; i++) {
+                            var s = $(".navbar>a").eq(i).data("href");
+                            var content = $(s);
+                            var name = listName[i];
+                            if (obj != null && obj !== undefined && obj[name] !== undefined) {
+                                // console.log(typeof obj[name])
+                                // console.log(obj[name])
+                                if (obj[name] instanceof Shape) {
+                                    var listShapeName = getListShapeNameDB();
+                                   
+                                    console.log(listShapeName)
+
+                                    var _shapeName = obj['Name'];
+
+                                    listShapeName.some(function(e){
+                                        if(_shapeName == e[0]){
+                                            var _shape = new e[1];
+                                            _shape.setUI();
+                                            _shape.click_Calc();
+                                            return true;
+                                        }
+                                    })
+
+                                    
+                                    
+                                }
+                                else
+                                    if (obj[name].constructor === Array) {
+                                        content.children().each(function () {
+                                            $(this).remove();
+                                        })
+                                        var wrap = $("<div/>");
+                                        wrap.addClass("wrap");
+                                        obj[name].forEach(function (e) {
+                                            //  console.log(e)
+                                            var item = $("<div/>").addClass("item");
+                                            var p_name = $("<p/>").attr("data-type", "name").html(e.Name);
+                                            var p_content = $("<p/>").attr("data-type", "content").html(e.Content);
+                                            item.append(p_name);
+                                            item.append(p_content);
+                                            wrap.append(item);
+                                        })
+                                        content.append(wrap);
+                                    }
+                                    else
+                                        //  console.log('nd ne',content)
+                                        content.html(obj[name])
+                            }
+                        }
+                    }
+                })
+
+                if (!ok) {
+                    location.href = "home.html";
+                }
+            }
+            else {
+                location.href = "home.html";
+            }
+            $(".navbar>a").click(function () {
+                var name = $(this).data("href").substring(1);
+                $(".heading_name").text($(this).text());
+                $("#content>*").each(function () {
+                    $(this).hide();
+                })
+                $(".navbar>a").each(function () {
+                    if ($(this).hasClass("active")) {
+                        $(this).removeClass("active");
+                    }
+                })
+
+                var s = $(this).data("href");
+                var content = $(s);
+                $(this).addClass("active");
+                content.show();
+
+
+            })
+
+            $("input[e-type='number']").change(function () {
+                var _val = $(this).val();
+                if (isNaN(_val)) {
+                    alert("Vui lòng nhập chữ số!");
+                    $(this).val(1)
+                }
+            })
+
+
+        })
+    </script>
