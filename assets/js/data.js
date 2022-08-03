@@ -1,11 +1,13 @@
-const PARAMETER_NAME = "paramater";
-const RESULT_NAME = "result";
+const PARAMETER_TYPE = "paramater";
+const RESULT_TYPE = "result";
 const AREA_TYPE_NAME = "area";
 const VOLUME_TYPE_NAME = "volume";
 const PERIMETER_TYPE_NAME = "perimeter";
+const DTXQ_TYPE_NAME = "dtxq";
+const DTTP_TYPE_NAME = "dttp";
 var checkInput = false;
 
-var GetInput = function (name,type=PARAMETER_NAME) {
+var GetInput = function (name,type=PARAMETER_TYPE) {
   var find = $("input[e-name='"+type+"'][name='"+name+"']");
   if(find.length==1){
     return find;
@@ -19,9 +21,8 @@ var GetInput = function (name,type=PARAMETER_NAME) {
   }
 }
 
-
 var SetPerimeterResult = function (value){
-  var result = GetInput(PERIMETER_TYPE_NAME,RESULT_NAME);
+  var result = GetInput(PERIMETER_TYPE_NAME,RESULT_TYPE);
   if(result!=null){
     result.val(value);
   }
@@ -31,7 +32,7 @@ var SetPerimeterResult = function (value){
 }
 
 var SetAreaResult = function (value){
-  var result = GetInput(AREA_TYPE_NAME,RESULT_NAME);
+  var result = GetInput(AREA_TYPE_NAME,RESULT_TYPE);
   if(result!=null){
     result.val(value);
   }
@@ -40,22 +41,60 @@ var SetAreaResult = function (value){
   }
 }
 
-var SetVolumeResult = function (){
-  
+var SetDTTPResult = function (value){
+  var result = GetInput(DTTP_TYPE_NAME,RESULT_TYPE);
+  if(result!=null){
+    result
+    .css("fontWeight","900")
+    .val(value);
+  }
+  else{
+    console.log("NULL OUTPUT")
+  }
 }
 
-var Check_IS_Input_Empty = function (){
+var SetDTXQResult = function (value){
+  var result = GetInput(DTXQ_TYPE_NAME,RESULT_TYPE);
+  if(result!=null){
+    result
+    .css("fontWeight","900")
+    .val(value);
+  }
+  else{
+    console.log("NULL OUTPUT")
+  }
+}
+
+var SetVolumeResult = function (value){
+
+  var result = GetInput(VOLUME_TYPE_NAME,RESULT_TYPE);
+  console.log(result);
+  if(result!=null){
+    result
+    .css("fontWeight","900")
+    .val(value);
+  }
+  else{
+    console.log("NULL OUTPUT")
+  }
+}
+
+var Check_IS_Input_Empty = function (type=""){
   var checkEmpty = false;
-    var listInput = $("input[e-name='paramater']");
+  var listInput = $("input[e-name='paramater']");
+    if(type!=""){
+      listInput = $("input[e-name='paramater'][r-for='"+type+"']");
+
+    }
     for(var i=0; i<listInput.length; i++){
       var e = listInput[i];
       if(e.value.trim()==""){
-        alert("Bạn chưa nhập "+e.getAttribute('e-display'));
+       // alert("Bạn chưa nhập "+e.getAttribute('e-display'));
         checkEmpty = true;
         break;
       } 
     }
-    return checkEmpty;
+    return false;
 }
 
 
@@ -63,55 +102,64 @@ class Shape {
   constructor() {
     this.ShapeList = [];
     this.ShapeName = "Shape Origin";
+    this.Area = true;
+    this.Perimeter = true;
     this.Volume = false;
-    this.setBtn();
+    this.DTXQ = false;
+    this.DTTP = false;
   }
 
   getShapeList() {
     return this.ShapeList;
   }
 
-  setList(name, value = "", result=0) {
-
+  setList(name, _v, type=RESULT_TYPE,required_for="") {
     if(name == AREA_TYPE_NAME){
-      value = "Diện tích";
-    }
-    else
-    if(name == VOLUME_TYPE_NAME){
-      value = "Thể tích";
+      _v = "Diện tích";
     }
     else
     if(name == PERIMETER_TYPE_NAME){
-      value = "Chu vi";
-    }
-
-    var _type = PARAMETER_NAME;
-    if(name == AREA_TYPE_NAME || name == VOLUME_TYPE_NAME || name == PERIMETER_TYPE_NAME){
-      _type = RESULT_NAME
+      _v = "Chu vi";
     }
     else
-    if(result!=0){
-      _type = RESULT_NAME;
+    if(name == DTTP_TYPE_NAME){
+      _v = "Diện tích toàn phần";
     }
-    this.getShapeList().push([name, value, _type]);
+    else
+    if(name == DTXQ_TYPE_NAME){
+      _v = "Diện tích xung quanh";
+    }
+    else
+    if(name == VOLUME_TYPE_NAME){
+      _v = "Thể tích";
+    }
+    else
+    {
+      type = PARAMETER_TYPE;
+    }
+    this.getShapeList().push([name, _v,type,required_for]);
   }
 
   setBtn() {
     var _div = $(".ShapeBtn");
     if (_div.children().length <= 0) {
-      var btnArea = $("<a/>")
+      if(this.Area){
+        var btnArea = $("<a/>")
       .addClass("btn")
       .attr("e-type", AREA_TYPE_NAME)
-      .attr("e-name",RESULT_NAME)
+      .attr("e-name",RESULT_TYPE)
       .text("Tính diện tích");
       _div.append(btnArea);
+      }
 
-      var btnPerimeter = $("<a/>")
+      if(this.Perimeter){
+        var btnPerimeter = $("<a/>")
       .addClass("btn")
       .attr("e-type", PERIMETER_TYPE_NAME)
-      .attr("e-name",RESULT_NAME)
+      .attr("e-name",RESULT_TYPE)
       .text("Tính chu vi");
       _div.append(btnPerimeter);
+      }
 
       if (this.Volume == true) {
         var btnVolume = $("<a/>")
@@ -119,6 +167,22 @@ class Shape {
         .attr("e-type", VOLUME_TYPE_NAME)
         .text("Tính thể tích");
         _div.append(btnVolume);
+      }
+
+      if (this.DTTP == true) {
+        var btnDTTP = $("<a/>")
+        .addClass("btn")
+        .attr("e-type", DTTP_TYPE_NAME)
+        .text("Tính diện tích toàn phần");
+        _div.append(btnDTTP);
+      }
+
+      if (this.DTXQ == true) {
+        var btnDTTP = $("<a/>")
+        .addClass("btn")
+        .attr("e-type", DTXQ_TYPE_NAME)
+        .text("Tính diện tích xung quanh");
+        _div.append(btnDTTP);
       }
     }
   }
@@ -145,6 +209,7 @@ class Shape {
           .attr('e-type', 'number')
           .attr('e-name',_this[2])
           .attr('e-display',_this[1])
+          .attr('r-for',_this[3])
           .attr("name", _this[0]);
 
         _p.append(_span);
@@ -178,7 +243,7 @@ class HinhVuong extends Shape {
     $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
-        var canh_a = GetInput("a").val();
+        var canh_a = Number(GetInput("a").val());
         var tinh = canh_a * canh_a;
         SetAreaResult(tinh);
       }
@@ -187,7 +252,7 @@ class HinhVuong extends Shape {
     $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
-        var canh_a = GetInput("a").val();
+        var canh_a = Number(GetInput("a").val());
         var tinh = canh_a * 4;
         SetPerimeterResult(tinh);
       }
@@ -209,8 +274,8 @@ class HinhChuNhat extends Shape {
     $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
-        var canh_a = GetInput("a").val();
-        var canh_b = GetInput("b").val();
+        var canh_a = Number(GetInput("a").val());
+        var canh_b = Number(GetInput("b").val());
         var tinh = canh_a * canh_b;
         SetAreaResult(tinh);
       }
@@ -220,8 +285,8 @@ class HinhChuNhat extends Shape {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
         
-        var canh_a = GetInput("a").val();
-        var canh_b = GetInput("b").val();
+        var canh_a = Number(GetInput("a").val());
+        var canh_b = Number(GetInput("b").val());
         var tinh = (canh_a + canh_b)*2;
         SetPerimeterResult(tinh);
       }
@@ -244,8 +309,8 @@ class HinhBinhHanh extends Shape {
     $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
-        var canh_a = GetInput("a").val();
-        var canh_h = GetInput("h").val();
+        var canh_a = Number(GetInput("a").val());
+        var canh_h = Number(GetInput("h").val());
         var tinh = canh_a * canh_h;
         SetAreaResult(tinh);
       }
@@ -255,8 +320,8 @@ class HinhBinhHanh extends Shape {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
         
-        var canh_a = GetInput("a").val();
-        var canh_b = GetInput("b").val();
+        var canh_a = Number(GetInput("a").val());
+        var canh_b = Number(GetInput("b").val());
 
         var tinh = (canh_a + canh_b)*2;
         SetPerimeterResult(tinh);
@@ -268,84 +333,294 @@ class HinhBinhHanh extends Shape {
 class HinhThang extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
-    this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.ShapeName = "hình thang";
+    this.setList("a", "Đáy lớn");
+    this.setList("b", "Đáy bé");
+    this.setList("c", "Cạnh bên");
+    this.setList("d", "Cạnh bên");
+    this.setList("h","Chiều cao");
+    this.setList(AREA_TYPE_NAME);
+    this.setList(PERIMETER_TYPE_NAME);
+  }
+  click_Calc() {
+    //diện tích
+    $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var a = Number(GetInput("a").val());
+        var b = Number(GetInput("b").val());
+        var h = Number(GetInput("h").val());
+
+        var tinh = (a + b)*h/2;
+        SetAreaResult(tinh);
+      }
+    });
+    //Chu vi
+    $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var a = Number(GetInput("a").val());
+        var b = Number(GetInput("b").val());
+        var c = GetInput("c").val();
+        var d = GetInput("d").val();
+
+        var tinh = Number(a) + Number(b) + Number(c) + Number(d);
+        SetPerimeterResult(tinh);
+      }
+    });
   }
 }
 
 class HinhTron extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
+    this.ShapeName = "hình tròn";
+    this.setList("r", "Đường kính");
+    this.setList("d", "Bán kính");
     this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.setList("perimeter", "Diện tích");
+  }
+  click_Calc() {
+    //diện tích
+    $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var canh_r = Number(GetInput("r").val());
+        var tinh = canh_r * canh_r * 3.14;
+        SetAreaResult(tinh);
+      }
+    });
+    //Chu vi
+    $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var canh_d = Number(GetInput("d").val());
+        var tinh = canh_d * 3.14;
+        SetPerimeterResult(tinh);
+      }
+    });
   }
 }
 
 class HinhTamGiac extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
-    this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.ShapeName = "hình tam giác";
+    this.setList("a", "Cạnh a");
+    this.setList("b", "Cạnh b");
+    this.setList("c", "Cạnh c");
+    this.setList("h", "Chiều cao");
+    this.setList(PERIMETER_TYPE_NAME);
+    this.setList(AREA_TYPE_NAME);
+  }
+
+  click_Calc() {
+    //diện tích
+    $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var canh_a = Number(GetInput("a").val());
+        var canh_h = Number(GetInput("h").val());
+        var tinh = (canh_a * canh_h)/2;
+        SetAreaResult(tinh);
+      }
+    });
+    //Chu vi
+    $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        
+        var canh_a = Number(GetInput("a").val());
+        var canh_b = Number(GetInput("b").val());
+        var canh_c = Number(GetInput("c").val());
+
+        var tinh = (canh_a + canh_b + canh_c);
+        SetPerimeterResult(tinh);
+      }
+    });
   }
 }
 
 class HinhThoi extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
-    this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.ShapeName = "hình thoi";
+    this.setList("a","Cạnh a");
+    this.setList("m", "Đường chéo m");
+    this.setList("n", "Đường chéo n");
+    this.setList(PERIMETER_TYPE_NAME);
+    this.setList(AREA_TYPE_NAME);
+  }
+
+  click_Calc() {
+    //diện tích
+    $("a[e-type='"+AREA_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var canh_m = Number(GetInput("m").val());
+        var canh_n = Number(GetInput("n").val());
+        var tinh = (canh_m * canh_n)/2;
+        SetAreaResult(tinh);
+      }
+    });
+    //Chu vi
+    $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var canh_a = Number(GetInput("a").val());
+        var tinh = canh_a * 4;
+        SetPerimeterResult(tinh);
+      }
+    });
   }
 }
 
 class HinhHopChuNhat extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
+    this.ShapeName = "hình hộp chữ nhật";
+    this.Volume = true;
+    this.Perimeter = false;
+    this.Area = false;
+    this.DTTP = true;
+    this.DTXQ = true;
+
     this.setList("a", "Chiều dài");
     this.setList("b", "Chiều rộng");
-    this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.setList("h","Chiều cao");
+    this.setList(DTTP_TYPE_NAME);
+    this.setList(DTXQ_TYPE_NAME);
+    this.setList(VOLUME_TYPE_NAME);
+  }
+  click_Calc() {
+    //diện tích tp
+    $("a[e-type='"+DTTP_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var a = Number(GetInput("a").val());
+        var b = Number(GetInput("b").val());
+        var h = Number(GetInput("h").val());
+
+        var tinh = (a + b) * 2 * h + (a * b * 2);
+        SetDTTPResult(tinh);
+      }
+    });
+    //diện tích xq
+    $("a[e-type='"+DTXQ_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+        var b = Number(GetInput("b").val());
+        var h = Number(GetInput("h").val());
+        var tinh = (a+b)*2*h;
+        SetDTXQResult(tinh);
+      }
+    });
+    //the tích
+    $("a[e-type='"+VOLUME_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+        var b = Number(GetInput("b").val());
+        var h = Number(GetInput("h").val());
+        var tinh = (a*b)*h;
+        SetVolumeResult(tinh);
+      }
+    });
   }
 }
 
 class HinhLapPhuong extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
-    this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.ShapeName = "hình lập phương";
+    this.setList("a","Độ dài cạnh a");
+    this.setList(DTTP_TYPE_NAME);
+    this.setList(DTXQ_TYPE_NAME);
+    this.setList(VOLUME_TYPE_NAME);
+    this.Volume = true;
+    this.Perimeter = false;
+    this.Area = false;
+    this.DTTP = true;
+    this.DTXQ = true;
+  }
+
+  click_Calc() {
+    //diện tích tp
+    $("a[e-type='"+DTTP_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var a = Number(GetInput("a").val());
+        var tinh = a*a*6;
+        SetDTTPResult(tinh);
+      }
+    });
+    //diện tích xq
+    $("a[e-type='"+DTXQ_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+
+        var tinh = a*a*4;
+        SetDTXQResult(tinh);
+      }
+    });
+    //the tích
+    $("a[e-type='"+VOLUME_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+
+        var tinh = a*a*a;
+        SetVolumeResult(tinh);
+      }
+    });
   }
 }
 
 class HinhTru extends Shape {
   constructor() {
     super();
-    this.ShapeName = "hình chữ nhật";
+    this.ShapeName = "hình trụ";
     this.setList("a", "Chiều dài");
     this.setList("b", "Chiều rộng");
     this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
+    this.Volume = true;
+    this.Perimeter = false;
+    this.Area = false;
+    this.DTTP = true;
+    this.DTXQ = true;
+  }
+  click_Calc() {
+    //diện tích tp
+    $("a[e-type='"+DTTP_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {
+        var a = Number(GetInput("a").val());
+        var tinh = a*a*6;
+        SetDTTPResult(tinh);
+      }
+    });
+    //diện tích xq
+    $("a[e-type='"+DTXQ_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+
+        var tinh = a*a*4;
+        SetDTXQResult(tinh);
+      }
+    });
+    //the tích
+    $("a[e-type='"+VOLUME_TYPE_NAME+"']").click(function () {
+      var is_empty = Check_IS_Input_Empty();
+      if (!is_empty) {     
+        var a = Number(GetInput("a").val());
+
+        var tinh = a*a*a;
+        SetVolumeResult(tinh);
+      }
+    });
   }
 }
 
@@ -450,7 +725,7 @@ const database = [
     Defination: "Là hình có 3 cạnh, 3 đỉnh và 3 góc. Các loại hình tam giác: tam giác thường, tam giác vuông, tam giác cân, tam giác đều. ",
 
     Formula: [
-      { Name: "Chu vi", Content: 'Tổng độ dài 3 cạnh' }
+      { Name: "Chu vi", Content: 'Lấy tổng độ dài 3 cạnh. <br> P= a + b + c <br> Kí hiệu: P là chu vi, a,b và c là độ dài ba cạnh của hình tam giác.' }
       ,
       { Name: "Diện tích", Content: 'Lấy độ dài đáy nhân chiều cao rồi chia cho 2 <br> (S = a x h : 2) <br> Kí hiệu: S là diện tích, a là độ dài đáy, h là chiều cao của hình tam giác.' }
     ],
@@ -503,11 +778,9 @@ const database = [
     Name: "Hình trụ",
     Url: "./assets/images/rectangular.jpg",
     Defination: "Là một hình học không gian giới hạn bởi mặt trụ (mặt bên) và hai đáy là hai đường tròn bằng nhau.",
-
     Formula: null,
-
     Shape_ID: "hinhtru",
-    Practice: new Shape,
+    Practice: "",
   },
   {
     Name: "Hình cầu",
@@ -515,7 +788,7 @@ const database = [
     Defination: "Là một hình không gian được tạo ra khi quay nửa hình tròn một vòng quanh đường kính của hình tròn đó. Hình cầu còn gọi là một khối tròn ",
     Formula: null,
     Shape_ID: "hinhcau",
-    Practice: new Shape,
+    Practice: "",
   }
 ];
 

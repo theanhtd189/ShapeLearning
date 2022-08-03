@@ -99,6 +99,11 @@
                             if (obj != null && obj !== undefined && obj[name] !== undefined) {
                                 // console.log(typeof obj[name])
                                 // console.log(obj[name])
+                                if(name == "Formula" && obj[name] == null) {
+                                    $("a[data-href='#Formula']").hide();
+                                    $("a[data-href='#ShapeObject']").hide();
+                                }
+                                else
                                 if (obj[name] instanceof Shape) {
                                     var listShapeName = getListShapeNameDB();
                                    
@@ -109,14 +114,12 @@
                                     listShapeName.some(function(e){
                                         if(_shapeName == e[0]){
                                             var _shape = new e[1];
+                                            _shape.setBtn();
                                             _shape.setUI();
                                             _shape.click_Calc();
                                             return true;
                                         }
-                                    })
-
-                                    
-                                    
+                                    })                                                                 
                                 }
                                 else
                                     if (obj[name].constructor === Array) {
