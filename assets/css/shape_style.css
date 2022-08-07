@@ -41,7 +41,7 @@
      display: inline-block;
      margin-top: 2.4em;
      font-family: 'Work Sans';
-     font-size: 70%;
+     font-size: 2rem;
      margin-bottom: -55px;
  }
 
@@ -314,6 +314,20 @@
 .wrap>.item{
     width: 50%;
 }
+.item:nth-child(2n):not(:last-child){
+    border-right: 1rem solid #717df2;
+    border-radius: 1rem;
+}
+
+.item:nth-child(2n+1):not(:last-child){
+    border-right: 1rem solid #f2296c;
+    border-radius: 1rem;
+}
+
+.item:not(:first-child){
+    margin-left: 1rem;
+}
+
 img {
     text-align: center;
     margin: 0 auto;
@@ -323,8 +337,8 @@ img {
     outline: 0;
     color: #fd2020;
     width: 50%;
-    border-right: none;
-    border-top: none;
+    /* border-right: none;
+    border-top: none; */
     font-size: 2rem;
     border-bottom: 3px solid #de0036;
     border-left: 3px solid #5d5de4;
@@ -344,7 +358,14 @@ img {
 
 }
 .ShapeBtn {
+    position: relative;
     text-align: center;
+}
+.ClearBtn {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
 }
 #formula {
     padding: 3rem 2rem;

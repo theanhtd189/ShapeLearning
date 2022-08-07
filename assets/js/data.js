@@ -237,6 +237,12 @@ class Shape {
         .html(icon+" Tính cạnh từ diện tích");
         _div.append(btnCanhdt);
       }
+
+      var icon = '<i class="fas fa-eraser"></i>';
+      var btnClear = $('<a class="btn ClearBtn" id="clear"></a>');
+      btnClear.html(icon + "     Xóa dữ liệu")
+      _div.append(btnClear);
+
     }
   }
 

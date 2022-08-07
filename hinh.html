@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
         integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/animate.min.css">
-    <link rel="stylesheet" href="/assets/css/shape_style.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/animate.min.css">
+    <link rel="stylesheet" href="./assets/css/shape_style.css">
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
 </head>
@@ -19,7 +19,7 @@
         <i class="fas fa-arrow-circle-left"></i>
         Trở về
     </a>
-    <a class="btn" id="info" onclick="location.href='index.html'">
+    <a class="btn" id="info" onclick="location.href='trangchu.html'">
         <!-- <img src="assets/images/info.gif"></img> -->
         <i class="fas fa-info-circle"></i>
         <!-- <a href="index.html"> </a> -->
@@ -28,9 +28,18 @@
 
     <div id="container">
         <nav class="navbar">
-            <a data-href="#Defination"><i class="fas fa-info-circle"></i> Đặc điểm </a>
-            <a data-href="#Formula"><i class="fas fa-square"></i> Công thức</a>
-            <a data-href="#ShapeObject"><i class="fas fa-clone"></i> Áp dụng</a>
+            <a data-href="#Defination" style="
+            background: #ffb4de;
+            color: #5a5af2;
+        "><i class="fas fa-info-circle"></i> Đặc điểm </a>
+            <a data-href="#Formula" style="
+                        color: #ffe8e8;
+                        background: red;
+                    "><i class="fas fa-square"></i> Công thức</a>
+            <a data-href="#ShapeObject" class="" style="
+                    color: #1a1e1a;
+                    background: yellow;
+                "><i class="fas fa-clone"></i> Áp dụng</a>
             <!-- <a data-href="#Volume"><i class="fas fa-layer-group"></i> Thể tích</a> -->
         </nav>
         <div class="section">
@@ -48,7 +57,8 @@
                     <div class="wrap">
                         <div class="ShapeList">
                         </div>
-                        <div class="ShapeBtn">                      
+                        <div class="ShapeBtn">    
+                                          
                         </div>
                     </div>
                     <div id="formula">
@@ -64,9 +74,9 @@
             </a>
         </div> -->
     </div>
-    <script src="/assets/js/jquery.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-    <script src="/assets/js/data.js"></script>
+    <script src="./assets/js/jquery.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="./assets/js/data.js"></script>
     <script>
         $(document).ready(function () {
             
@@ -186,6 +196,11 @@
                 }
             })
 
+            $("#clear").click(function () {
+                $("input").each(function () {
+                    $(this).val('');
+                })
+            })
 
         })
     </script>
