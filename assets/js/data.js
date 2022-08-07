@@ -5,7 +5,21 @@ const VOLUME_TYPE_NAME = "volume";
 const PERIMETER_TYPE_NAME = "perimeter";
 const DTXQ_TYPE_NAME = "dtxq";
 const DTTP_TYPE_NAME = "dttp";
+const EDGE_TYPE = "edge";
+
 var checkInput = false;
+
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
 
 var GetInput = function (name,type=PARAMETER_TYPE) {
   var find = $("input[e-name='"+type+"'][name='"+name+"']");
@@ -21,13 +35,30 @@ var GetInput = function (name,type=PARAMETER_TYPE) {
   }
 }
 
+var SetFormula = function (f){
+  var div = $("#formula");
+  var _f = $("#formula>p#f-content");
+  _f.html(f);
+  div.addClass("show");
+}
+
+var SetEdgeResult = function (name,value){
+  var result = GetInput(name);
+  if(result!=null){
+    result.val(value);
+  }
+  else{
+    return;
+  }
+}
+
 var SetPerimeterResult = function (value){
   var result = GetInput(PERIMETER_TYPE_NAME,RESULT_TYPE);
   if(result!=null){
     result.val(value);
   }
   else{
-    console.log("NULL OUTPUT")
+    return;
   }
 }
 
@@ -107,6 +138,7 @@ class Shape {
     this.Volume = false;
     this.DTXQ = false;
     this.DTTP = false;
+    this.canh = false;
   }
 
   getShapeList() {
@@ -144,45 +176,66 @@ class Shape {
     var _div = $(".ShapeBtn");
     if (_div.children().length <= 0) {
       if(this.Area){
+        var icon = '<i class="fas fa-square"></i>';
         var btnArea = $("<a/>")
       .addClass("btn")
       .attr("e-type", AREA_TYPE_NAME)
       .attr("e-name",RESULT_TYPE)
-      .text("Tính diện tích");
+      .html(icon+" Tính diện tích");
       _div.append(btnArea);
       }
 
       if(this.Perimeter){
+        var icon = '<i class="fas fa-wave-square"></i>';
         var btnPerimeter = $("<a/>")
       .addClass("btn")
       .attr("e-type", PERIMETER_TYPE_NAME)
       .attr("e-name",RESULT_TYPE)
-      .text("Tính chu vi");
+      .html(icon+ " Tính chu vi");
       _div.append(btnPerimeter);
       }
 
       if (this.Volume == true) {
+        var icon = '<i class="fas fa-cube"></i>';
         var btnVolume = $("<a/>")
         .addClass("btn")
         .attr("e-type", VOLUME_TYPE_NAME)
-        .text("Tính thể tích");
+        .html(icon+" Tính thể tích");
         _div.append(btnVolume);
       }
 
       if (this.DTTP == true) {
+        var icon = '<i class="fas fa-border-none"></i>';
         var btnDTTP = $("<a/>")
         .addClass("btn")
         .attr("e-type", DTTP_TYPE_NAME)
-        .text("Tính diện tích toàn phần");
+        .html(icon+" Tính diện tích toàn phần");
         _div.append(btnDTTP);
       }
 
       if (this.DTXQ == true) {
+        var icon = '<i class="fas fa-circle-notch"></i>';
         var btnDTTP = $("<a/>")
         .addClass("btn")
         .attr("e-type", DTXQ_TYPE_NAME)
-        .text("Tính diện tích xung quanh");
+        .html(icon+" Tính diện tích xung quanh");
         _div.append(btnDTTP);
+      }
+      if (this.canh) {
+        var icon = '<i class="fas fa-tenge"></i>';
+        var btnCanhcv = $("<a/>")
+        .addClass("btn")
+        .attr("e-type", EDGE_TYPE)
+        .attr('c-for',PERIMETER_TYPE_NAME)
+        .html(icon+" Tính cạnh từ chu vi");
+        _div.append(btnCanhcv);
+
+        var btnCanhdt = $("<a/>")
+        .addClass("btn")
+        .attr('c-for',AREA_TYPE_NAME)
+        .attr("e-type", EDGE_TYPE)
+        .html(icon+" Tính cạnh từ diện tích");
+        _div.append(btnCanhdt);
       }
     }
   }
@@ -219,24 +272,16 @@ class Shape {
       }
     }
   }
-
-
-  btn_Volume_Click_Event(){
-
-  }
-
-  
-
 }
 
 class HinhVuong extends Shape {
   constructor() {
     super();
     this.ShapeName = "hình vuông";
-    this.setList("a", "Chiều dài cạnh");
+    this.setList("a", "Chiều dài 1 cạnh (a)");
     this.setList(PERIMETER_TYPE_NAME);
     this.setList(AREA_TYPE_NAME);
-
+    this.canh = true;
   }
   click_Calc() {
     //diện tích
@@ -245,16 +290,65 @@ class HinhVuong extends Shape {
       if (!is_empty) {
         var canh_a = Number(GetInput("a").val());
         var tinh = canh_a * canh_a;
+        var f = 'S = a x a = {0} x {0} = {1}'.format(canh_a,tinh);
         SetAreaResult(tinh);
+        SetFormula(f);
       }
     });
     //Chu vi
     $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
       if (!is_empty) {
+        console.log('tinh')
         var canh_a = Number(GetInput("a").val());
         var tinh = canh_a * 4;
+        var f = 'C = a x 4 = {0} x 4 = {1}'.format(canh_a, tinh);
         SetPerimeterResult(tinh);
+        SetFormula(f);
+      }
+    });
+
+    //tính cạnh
+    $("a[e-type='"+EDGE_TYPE+"']").click(function () {
+      var cvI = GetInput(PERIMETER_TYPE_NAME, RESULT_TYPE);
+      var cv = cvI.val().trim();
+      var dtI = GetInput(AREA_TYPE_NAME,RESULT_TYPE);
+      var dt = dtI.val().trim();
+      var f = '';
+      
+      var _type = $(this).attr('c-for');
+      var a = Number(GetInput("a").val());
+      var tinh = 0;
+
+      if(_type == PERIMETER_TYPE_NAME && cv!=""){ //chu vi
+        cv = Number(cv);   
+        dtI.val('');
+
+        tinh = cv / 4;
+        f = 'P = a x 4 \
+        <br>=> a = P : 4 \
+        <br>=> a = {0} : 4 \
+        <br>=> a = {1}'.format(cv,tinh);
+        
+      }
+      else
+      if(_type == AREA_TYPE_NAME && dt!="") //tính cạnh từ diện tích
+      {
+        dt = Number(dt);    
+        cvI.val('');
+
+        tinh = Math.sqrt(dt);
+        f = 'S = a x a \
+        <br> => {0} = a x a \
+        <br> => a = &#8730; {0}\
+        <br> => a = {1}'.format(dt,tinh);
+
+      }
+
+      if(tinh!= null && tinh!=0 )
+      {
+        SetEdgeResult("a",tinh);
+        SetFormula(f);
       }
     });
   }
@@ -264,10 +358,11 @@ class HinhChuNhat extends Shape {
   constructor() {
     super();
     this.ShapeName = "hình chữ nhật";
-    this.setList("a", "Chiều dài");
-    this.setList("b", "Chiều rộng");
+    this.setList("a", "Chiều dài (a)");
+    this.setList("b", "Chiều rộng (b)");
     this.setList(PERIMETER_TYPE_NAME);
     this.setList(AREA_TYPE_NAME);
+    this.canh = true;
   }
   click_Calc() {
     //diện tích
@@ -277,9 +372,12 @@ class HinhChuNhat extends Shape {
         var canh_a = Number(GetInput("a").val());
         var canh_b = Number(GetInput("b").val());
         var tinh = canh_a * canh_b;
+        var f = 'S = a x b = {0} x {1} = {2}'.format(canh_a,canh_b,tinh);
         SetAreaResult(tinh);
+        SetFormula(f);
       }
     });
+
     //Chu vi
     $("a[e-type='"+PERIMETER_TYPE_NAME+"']").click(function () {
       var is_empty = Check_IS_Input_Empty();
@@ -289,6 +387,78 @@ class HinhChuNhat extends Shape {
         var canh_b = Number(GetInput("b").val());
         var tinh = (canh_a + canh_b)*2;
         SetPerimeterResult(tinh);
+        var f = 'P = ( a + b ) x 2 = ( {0} + {1} ) x 2 = {2}'.format(canh_a,canh_b,tinh);
+        SetFormula(f);
+      }
+    });
+
+    //tính cạnh
+    $("a[e-type='"+EDGE_TYPE+"']").click(function () {
+      var cvI = GetInput(PERIMETER_TYPE_NAME, RESULT_TYPE);
+      var cv = cvI.val().trim();
+      var dtI = GetInput(AREA_TYPE_NAME,RESULT_TYPE);
+      var dt = dtI.val().trim();
+      var f = '';
+      
+      var _type = $(this).attr('c-for');
+      var a = GetInput("a").val().trim()!=""?Number(GetInput("a").val()):0;
+      var b = GetInput("b").val().trim()!=""?Number(GetInput("b").val()):0;
+      var tinh = 0;
+      var edge_name = "";
+
+      if(_type == PERIMETER_TYPE_NAME && cv!=""){ //chu vi
+        cv = Number(cv);   
+        dtI.val('');
+
+        if (a == 0 && b != 0) {
+          tinh = cv / 2 - b;
+          f = 'P = (a + b) x 2 \
+        <br>=> a = P : 2 - b \
+        <br>=> a = {0} : 2 - {1} \
+        <br>=> a = {2}'.format(cv, b,tinh);
+        edge_name = "a";
+        }
+        else
+          if (b == 0 && a != 0) {
+            tinh = cv / 2 - a;
+            edge_name = "b";
+          f = 'P = (a + b) x 2 \
+        <br>=> b = P : 2 - a \
+        <br>=> b = {0} : 2 - {1} \
+        <br>=> b = {2}'.format(cv, a,tinh);
+          }
+        
+      }
+      else
+      if(_type == AREA_TYPE_NAME && dt!="") //tính cạnh từ diện tích
+      {
+        dt = Number(dt);    
+        cvI.val('');
+
+        if (a == 0 && b != 0) {
+          tinh = dt / b;
+          edge_name = "a";
+          f = 'S = a x b \
+        <br>=> a = S : b \
+        <br>=> a = {0} : {1} \
+        <br>=> a = {2}'.format(dt, b,tinh);
+        }
+        else
+          if (b == 0 && a != 0) {
+            tinh = dt / a;
+            edge_name = "b";
+          f = 'S = a x b \
+        <br>=> a = S : b \
+        <br>=> a = {0} : {1} \
+        <br>=> a = {2}'.format(dt, a,tinh);
+          }
+
+      }
+
+      if(tinh!= null && tinh!=0 )
+      {
+        SetEdgeResult(edge_name,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -313,6 +483,9 @@ class HinhBinhHanh extends Shape {
         var canh_h = Number(GetInput("h").val());
         var tinh = canh_a * canh_h;
         SetAreaResult(tinh);
+
+        var f = 'S = a x h = {0} x {1} = {2}'.format(canh_a,canh_h,tinh);
+        SetFormula(f);
       }
     });
     //Chu vi
@@ -325,6 +498,9 @@ class HinhBinhHanh extends Shape {
 
         var tinh = (canh_a + canh_b)*2;
         SetPerimeterResult(tinh);
+
+        var f = 'P = ( a + b ) x 2 = ( {0} + {1} ) x2 = {2}'.format(canh_a,canh_h,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -334,13 +510,14 @@ class HinhThang extends Shape {
   constructor() {
     super();
     this.ShapeName = "hình thang";
-    this.setList("a", "Đáy lớn");
-    this.setList("b", "Đáy bé");
-    this.setList("c", "Cạnh bên");
-    this.setList("d", "Cạnh bên");
-    this.setList("h","Chiều cao");
+    this.setList("a", "Đáy lớn (a)");
+    this.setList("b", "Đáy bé (b)");
+    this.setList("c", "Cạnh bên (c)");
+    this.setList("d", "Cạnh bên (d)");
+    this.setList("h","Chiều cao (h)");
     this.setList(AREA_TYPE_NAME);
     this.setList(PERIMETER_TYPE_NAME);
+    this.canh = true;
   }
   click_Calc() {
     //diện tích
@@ -353,6 +530,10 @@ class HinhThang extends Shape {
 
         var tinh = (a + b)*h/2;
         SetAreaResult(tinh);
+        var f = 'S = ( a + b ) x h  : 2\
+        <br>=> S = ( {0} + {1} ) x {2} / 2\
+        <br>=> S = {3} '.format(a,b,h,tinh);
+        SetFormula(f);
       }
     });
     //Chu vi
@@ -366,6 +547,105 @@ class HinhThang extends Shape {
 
         var tinh = Number(a) + Number(b) + Number(c) + Number(d);
         SetPerimeterResult(tinh);
+        var f = 'S =  a + b + c + d\
+        <br>=> S = {0} + {1} + {2} + {3}\
+        <br>=> S = {4} '.format(a,b,c,d,tinh);
+        SetFormula(f);
+      }
+    });
+
+    //tính cạnh
+    $("a[e-type='"+EDGE_TYPE+"']").click(function () {
+      var cvI = GetInput(PERIMETER_TYPE_NAME, RESULT_TYPE);
+      var cv = cvI.val().trim();
+      var dtI = GetInput(AREA_TYPE_NAME,RESULT_TYPE);
+      var dt = dtI.val().trim();
+      var f = '';
+      
+      var _type = $(this).attr('c-for');
+      var a = GetInput("a").val().trim()!=""?Number(GetInput("a").val()):0;
+      var b = GetInput("b").val().trim()!=""?Number(GetInput("b").val()):0;
+      var c = GetInput("c").val().trim()!=""?Number(GetInput("c").val()):0;
+      var d = GetInput("d").val().trim()!=""?Number(GetInput("d").val()):0;
+      var h = GetInput("h").val().trim()!=""?Number(GetInput("h").val()):0;
+
+      var tinh = 0;
+      var edge_name = "";
+
+      if(_type == PERIMETER_TYPE_NAME && cv!=""){ //chu vi
+        cv = Number(cv);   
+        dtI.val('');
+
+        if (a == 0 && b != 0 && c != 0 && d != 0) {
+          tinh = cv - b - c - d;
+          f = 'P = a + b + c + d\
+        <br>=> a = P - b - c -d \
+        <br>=> a = {0} - {1} - {2} - {3} \
+        <br>=> a = {4}'.format(cv, b, c, d, tinh);
+        edge_name = "a";
+        }
+        else if (b == 0 && c != 0 && c != 0 && d != 0) {
+          tinh = cv - a - c -d;
+          f = 'P = a + b + c + d\
+        <br>=> b = P - a - c -d \
+        <br>=> b = {0} - {1} - {2} - {3} \
+        <br>=> b = {4}'.format(cv, a, c, d, tinh);
+        edge_name = "b";
+        }
+        else if (c == 0 && b != 0 && d != 0 && d != 0) {
+          tinh = cv - b - a - d;
+          f = 'P = a + b + c + d\
+        <br>=> c = P - b - a -d \
+        <br>=> c = {0} - {1} - {2} - {3} \
+        <br>=> c = {4}'.format(cv, b, a, d, tinh);
+        edge_name = "c";
+        }     
+        else if (d == 0 && b != 0 && c != 0 && a != 0) {
+          tinh = cv - a - b - c;
+          f = 'P = a + b + c + d\
+        <br>=> d = P - b - c - a \
+        <br>=> d = {0} - {1} - {2} - {3} \
+        <br>=> d = {4}'.format(cv, b, c, a, tinh);
+        edge_name = "d";
+        }
+      }
+      else
+      if(_type == AREA_TYPE_NAME && dt!="") //tính cạnh từ diện tích
+      {
+        dt = Number(dt);    
+        cvI.val('');
+
+        if (h==0 && a != 0 && b != 0) {
+          tinh = 2 * dt / ( a + b );
+          edge_name = "h";
+          f = 'S = ( a + b ) x h : 2  \
+        <br>=> h = 2 x S : ( a + b ) \
+        <br>=> h = 2 x {0} : ( {1} + {2} ) \
+        <br>=> h = {3}'.format(dt, a, b, tinh);
+        }
+        else if (a==0 && h != 0 && b != 0) {
+          tinh = ( 2 * dt / h ) - b;
+          edge_name = "a";
+          f = 'S = ( a + b ) x h : 2  \
+        <br>=> a = ( 2 x S : h ) - b \
+        <br>=> a = ( 2 x {0} : {1} ) - {2} \
+        <br>=> a = {3}'.format(dt, h, b,  tinh);
+        }
+        else if (b==0 && h != 0 && a != 0) {
+          tinh = ( 2 * dt / h ) - a;
+          edge_name = "b";
+          f = 'S = ( a + b ) x h : 2  \
+        <br>=> b = ( 2 x S : h ) - a \
+        <br>=> b = ( 2 x {0} : {1} ) - {2} \
+        <br>=> b = {3}'.format(dt, dt, h, a,  tinh);
+        }
+      }
+
+      if(tinh!= null && tinh!=0 )
+      {
+        tinh = Math.round(tinh * 100 ) / 100;
+        SetEdgeResult(edge_name,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -387,6 +667,8 @@ class HinhTron extends Shape {
       if (!is_empty) {
         var canh_r = Number(GetInput("r").val());
         var tinh = canh_r * canh_r * 3.14;
+        var f = 'S = r x r x 3,14 = {0} x {0} x 3,14 = {1}'.format(canh_r,tinh);
+        SetFormula(f);
         SetAreaResult(tinh);
       }
     });
@@ -397,6 +679,8 @@ class HinhTron extends Shape {
         var canh_d = Number(GetInput("d").val());
         var tinh = canh_d * 3.14;
         SetPerimeterResult(tinh);
+        var f = 'P = d x 3,14 = {0} x 3,14 = {1}'.format(canh_d,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -409,9 +693,10 @@ class HinhTamGiac extends Shape {
     this.setList("a", "Cạnh a");
     this.setList("b", "Cạnh b");
     this.setList("c", "Cạnh c");
-    this.setList("h", "Chiều cao");
+    this.setList("h", "Chiều cao (h)");
     this.setList(PERIMETER_TYPE_NAME);
     this.setList(AREA_TYPE_NAME);
+    this.canh = true;
   }
 
   click_Calc() {
@@ -423,6 +708,10 @@ class HinhTamGiac extends Shape {
         var canh_h = Number(GetInput("h").val());
         var tinh = (canh_a * canh_h)/2;
         SetAreaResult(tinh);
+        var f = 'S = a x h / 2\
+        <br>=> S = {0} x {1} / 2\
+        <br>=> S = {2}'.format(canh_a, canh_h, tinh);
+        SetFormula(f);
       }
     });
     //Chu vi
@@ -436,8 +725,95 @@ class HinhTamGiac extends Shape {
 
         var tinh = (canh_a + canh_b + canh_c);
         SetPerimeterResult(tinh);
+        var f = 'P = a + b + c \
+        <br>=> P = {0} + {1} + {3}\
+        <br>=> P = {3}'.format(canh_a, canh_b , canh_c, tinh);
+        SetFormula(f);
       }
     });
+
+        //tính cạnh
+        $("a[e-type='"+EDGE_TYPE+"']").click(function () {
+          var cvI = GetInput(PERIMETER_TYPE_NAME, RESULT_TYPE);
+          var cv = cvI.val().trim();
+          var dtI = GetInput(AREA_TYPE_NAME,RESULT_TYPE);
+          var dt = dtI.val().trim();
+          var f = '';
+          
+          var _type = $(this).attr('c-for');
+          var a = GetInput("a").val().trim()!=""?Number(GetInput("a").val()):0;
+          var b = GetInput("b").val().trim()!=""?Number(GetInput("b").val()):0;
+          var c = GetInput("c").val().trim()!=""?Number(GetInput("c").val()):0;
+          var h = GetInput("h").val().trim()!=""?Number(GetInput("h").val()):0;
+
+          var tinh = 0;
+          var edge_name = "";
+    
+          console.log(_type)
+          if(_type == PERIMETER_TYPE_NAME && cv!=""){ //chu vi
+            cv = Number(cv);   
+            dtI.val('');
+    
+            if (a == 0 && c!= 0 && b != 0) {
+              tinh = cv - b - c;
+              f = 'P = ( a + b + c) \
+            <br>=> a = P - b - c \
+            <br>=> a = {0} - {1} - {2} \
+            <br>=> a = {3}'.format(cv, b, c,tinh);
+            edge_name = "a";
+            }
+            else
+            if (b == 0 && a!= 0 && c != 0) {
+              tinh = cv - a - c;
+              f = 'P = ( a + b + c) \
+            <br>=> b = P - a - c \
+            <br>=> b = {0} - {1} - {2} \
+            <br>=> b = {3}'.format(cv, a, c,tinh);
+            edge_name = "b";
+            }
+            else if (c == 0 && a!= 0 && b != 0) {
+              tinh = cv - a - b;
+              f = 'P = ( a + b + c) \
+            <br>=> c = P - a - b \
+            <br>=> c = {0} - {1} - {2} \
+            <br>=> c = {3}'.format(cv, a, b,tinh);
+            edge_name = "c";
+            }
+            
+          }
+          else
+          if(_type == AREA_TYPE_NAME && dt!="") //tính cạnh từ diện tích
+          {
+            dt = Number(dt);    
+            cvI.val('');
+              
+            console.log(b != 0 && a == 0)
+            if (a == 0 && h != 0) {
+              tinh = 2 * dt / h;
+              edge_name = "a";
+              f = 'S = a x h / 2\
+            <br>=> a = 2 x S : h\
+            <br>=> a = 2 x {0} : {1} \
+            <br>=> a = {2}'.format(dt,h,tinh);
+            }
+            else
+              if (h == 0 && a != 0) {
+                tinh = 2 * dt / a;
+                edge_name = "h";
+                f = 'S = a x h / 2\
+                <br>=> h = 2 x S : a\
+                <br>=> h = 2 x {0} : {1} \
+                <br>=> h = {2}'.format(dt,a,tinh);
+              }
+    
+          }
+          
+          if(tinh!= null && tinh!=0 )
+          {
+            SetEdgeResult(edge_name,tinh);
+            SetFormula(f);
+          }
+        });
   }
 }
 
@@ -461,6 +837,10 @@ class HinhThoi extends Shape {
         var canh_n = Number(GetInput("n").val());
         var tinh = (canh_m * canh_n)/2;
         SetAreaResult(tinh);
+        var f = 'S = m x n : 2\
+        <br>=> S = {0} x {1} : 2 \
+        <br>=> S = {2}'.format(canh_m,canh_n,tinh);
+        SetFormula(f);
       }
     });
     //Chu vi
@@ -470,6 +850,10 @@ class HinhThoi extends Shape {
         var canh_a = Number(GetInput("a").val());
         var tinh = canh_a * 4;
         SetPerimeterResult(tinh);
+        var f = 'P = a x 4 \
+        <br>=> P = {0} x 4 \
+        <br>=> P = {1}'.format(canh_a,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -503,6 +887,11 @@ class HinhHopChuNhat extends Shape {
 
         var tinh = (a + b) * 2 * h + (a * b * 2);
         SetDTTPResult(tinh);
+
+        var f = 'Stp = (a + b) x 2 x h + (a x b x 2) \
+        <br>=> Stp = ({0} + {1}) x 2 x {3} + ({0} x {1} x 2) \
+        <br>=> Stp = {3}'.format(a,b,h,tinh);
+        SetFormula(f);
       }
     });
     //diện tích xq
@@ -514,6 +903,11 @@ class HinhHopChuNhat extends Shape {
         var h = Number(GetInput("h").val());
         var tinh = (a+b)*2*h;
         SetDTXQResult(tinh);
+
+        var f = 'Sxq = (a + b) x 2 x h \
+        <br>=> Sxq = ({0} + {1}) x 2 x {2} \
+        <br>=> Sxq = {3}'.format(a,b,h,tinh);
+        SetFormula(f);
       }
     });
     //the tích
@@ -525,6 +919,11 @@ class HinhHopChuNhat extends Shape {
         var h = Number(GetInput("h").val());
         var tinh = (a*b)*h;
         SetVolumeResult(tinh);
+
+        var f = 'V = a x b x h \
+        <br>=> V = {0} x {1} x {2} \
+        <br>=> V = {3}'.format(a,b,h,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -553,6 +952,11 @@ class HinhLapPhuong extends Shape {
         var a = Number(GetInput("a").val());
         var tinh = a*a*6;
         SetDTTPResult(tinh);
+
+        var f = 'Stp = a x a x 6 \
+        <br>=> Stp = {0} x {0} x 6 \
+        <br>=> Stp = {1}'.format(a,tinh);
+        SetFormula(f);
       }
     });
     //diện tích xq
@@ -563,6 +967,11 @@ class HinhLapPhuong extends Shape {
 
         var tinh = a*a*4;
         SetDTXQResult(tinh);
+
+        var f = 'Sxq = a x a x 4 \
+        <br>=> Sxq = {0} x {0} x 4 \
+        <br>=> Sxq = {1}'.format(a,tinh);
+        SetFormula(f);
       }
     });
     //the tích
@@ -573,6 +982,11 @@ class HinhLapPhuong extends Shape {
 
         var tinh = a*a*a;
         SetVolumeResult(tinh);
+
+        var f = 'Sxq = a x a x a \
+        <br>=> Sxq = {0} x {0} x {0} \
+        <br>=> Sxq = {1}'.format(a,tinh);
+        SetFormula(f);
       }
     });
   }
@@ -631,20 +1045,18 @@ class HinhCau extends Shape {
     this.setList("a", "Chiều dài");
     this.setList("b", "Chiều rộng");
     this.setList("area", "Diện tích");
-    this.setUI(this.ShapeList);
-    console.log("init ",this.ShapeName)
   }
 }
 
 var getListShapeNameDB = function () {
   var list = 
   [
-      ["Hình vuông",HinhVuong],
-      ["Hình chữ nhật",HinhChuNhat],
+      ["Hình vuông",HinhVuong],//
+      ["Hình chữ nhật",HinhChuNhat],//
       ["Hình bình hành",HinhBinhHanh],
-      ["Hình thang",HinhThang],
+      ["Hình thang",HinhThang],//
       ["Hình tròn",HinhTron],
-      ["Hình tam giác",HinhTamGiac],
+      ["Hình tam giác",HinhTamGiac],//
       ["Hình thoi",HinhThoi],
       ["Hình hộp chữ nhật",HinhHopChuNhat],
       ["Hình lập phương",HinhLapPhuong],
@@ -653,7 +1065,6 @@ var getListShapeNameDB = function () {
   ];
   return list;
 }
-
 
 const database = [
   {
@@ -754,7 +1165,8 @@ const database = [
     Formula: [
       { Name: "Diện tích xung quanh", Content: 'Lấy chu vi đáy nhân với chiều cao (cùng đơn vị đo) <br> S = (a + b) x 2 x h <br> Kí hiệu: S là diện tích xung quanh, a là chiều dài, b là chiều rộng, h là chiều cao của hình hộp chữ nhật.' },
       { Name: "Diện tích toàn phần", Content: 'Lấy diện tích xung quanh cộng với diện tích 2 đáy <br> S = (a + b) x 2 x h + (a x b x 2) <br> Kí hiệu: S là diện tích toàn phần, a là chiều dài, b là chiều rộng, h là chiều cao của hình hộp chữ nhật.' },
-      { Name: "Thể tích", Content: 'Lấy chiều dài nhân với chiều rộng rồi nhân với chiều cao (cùng đơn vị đo) <br> V = a x b x c <br> Kí hiệu: V là thể tích, a là chiều dài, b là chiều rộng, c là chiều cao của hình hộp chữ nhật.' }
+      { Name: "Thể tích", Content: 'Lấy chiều dài nhân với chiều rộng rồi nhân với chiều cao (cùng đơn vị đo) \
+      <br> V = a x b x h <br> Kí hiệu: V là thể tích, a là chiều dài, b là chiều rộng, h là chiều cao của hình hộp chữ nhật.' }
     ],
 
     Shape_ID: "hinhhopchunhat",
@@ -762,7 +1174,7 @@ const database = [
   },
   {
     Name: "Hình lập phương",
-    Url: "./assets/images/rectangular.jpg",
+    Url: "./assets/images/hinhlapphuong.jpg",
     Defination: 'Là một hình không gian có 6 mặt, 8 đỉnh, 12 cạnh. Các mặt của hình lập phương đều là hình vuông có kích thước bằng nhau (đều có 6 mặt bằng nhau). Hình lập phương chỉ có duy nhất 1 kích thước',
 
     Formula: [
@@ -776,7 +1188,7 @@ const database = [
   },
   {
     Name: "Hình trụ",
-    Url: "./assets/images/rectangular.jpg",
+    Url: "./assets/images/hinhtru.jpg",
     Defination: "Là một hình học không gian giới hạn bởi mặt trụ (mặt bên) và hai đáy là hai đường tròn bằng nhau.",
     Formula: null,
     Shape_ID: "hinhtru",
@@ -784,7 +1196,7 @@ const database = [
   },
   {
     Name: "Hình cầu",
-    Url: "./assets/images/rectangular.jpg",
+    Url: "./assets/images/hinhcau.jpg",
     Defination: "Là một hình không gian được tạo ra khi quay nửa hình tròn một vòng quanh đường kính của hình tròn đó. Hình cầu còn gọi là một khối tròn ",
     Formula: null,
     Shape_ID: "hinhcau",

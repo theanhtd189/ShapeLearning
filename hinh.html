@@ -34,7 +34,6 @@
             <!-- <a data-href="#Volume"><i class="fas fa-layer-group"></i> Thể tích</a> -->
         </nav>
         <div class="section">
-
             <div class="main">
                 <p id="title" style="color: rgb(140, 206, 140);"></p>
                 <div id="shape" class="shape"></div>
@@ -52,9 +51,12 @@
                         <div class="ShapeBtn">                      
                         </div>
                     </div>
+                    <div id="formula">
+                        <p id="f-content">S = abc + 234</p>
+                    </div>
                 </div>
             </div>
-
+            
         </div>
 
         <!-- <div class="last-button">
@@ -154,6 +156,8 @@
             else {
                 location.href = "home.html";
             }
+
+
             $(".navbar>a").click(function () {
                 var name = $(this).data("href").substring(1);
                 $(".heading_name").text($(this).text());

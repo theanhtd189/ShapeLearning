@@ -299,6 +299,7 @@
   a.btn {
     border: .5px solid #00000042;
     transition: .5s;
+    font-size: 2rem;
     }
     a.btn:hover {
         transition:.5s;
@@ -335,6 +336,8 @@ img {
 }
 .wrap {
     display: flex;
+    font-family: emoj;
+    font-size: 4rem;
 }
 .ShapeBtn, .shapeList {
     width: 50%;
@@ -342,4 +345,44 @@ img {
 }
 .ShapeBtn {
     text-align: center;
+}
+#formula {
+    padding: 3rem 2rem;
+    font-size: 6rem;
+    font-family: fantasy;
+    display: none;
+}
+#f-content {
+    text-align:center;
+    color:red;
+}
+.show {
+    animation: show 0.5s ease-in-out both;
+}
+
+.hide {
+    animation: hide 0.5s ease-in-out both;
+}
+
+@keyframes hide {
+    0% {
+        visibility: visible;
+        opacity: 1;
+    }
+    100% {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+@keyframes show {
+    0% {
+        visibility: hidden;
+        opacity: 0;
+        display: none;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+        display:block;
+    }
 }
