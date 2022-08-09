@@ -12,7 +12,10 @@
 <div id='stars'></div>
 <div id='stars2'></div>
 <div id='stars3'></div>
-
+<marquee class="copyright">
+  <span class="cp">
+  </span>
+</marquee>
   <h2 class="heading" id="heading"></h2>
     <ul class="honeycomb" lang="es">   
         <!-- <li class="honeycomb-cell">
@@ -45,6 +48,9 @@
         </li> -->
         
       </ul>
+      <marquee direction="right"  class="copyright" style="margin-top: 5rem;">
+        <span class="cp"></span>
+    </marquee>
 </body>
 </html>
 <script src="./assets/js/jquery.js"></script>
@@ -55,6 +61,9 @@
     var arr = database;
     var heading = $("#heading").text("Mời bạn chọn loại hình muốn học");
      
+    $("span.cp").each(function () {
+      $(this).text("Sản phẩm thuộc bản quyền của trường Tiểu Học Tân Đức - Phú Bình - Thái Nguyên".toUpperCase())
+    })
     console.log(arr.length)
     for(var i = 0; i < arr.length; i++){
       var _this = arr[i];

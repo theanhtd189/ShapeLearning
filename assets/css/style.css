@@ -7,12 +7,12 @@ html, body {
 }
 html {
   height: 120%;
-  background: radial-gradient(ellipse at bottom, #1b2735 0%, #060709 0%);
+  background: radial-gradient(ellipse at bottom, #399dea 0%, #399dea 0%);
 }
 
 body {
   font-family: "Montserrat", sans-serif;
-  /* background: #3ea0eb; */
+  background: #399dea;
   overflow: auto;
 
 }
@@ -162,11 +162,11 @@ body {
   z-index: -1;
 }
 .honeycomb-cell::before {
-  background: #fff;
+  background: #daf732;
   transform: scale(1.055);
 }
 .honeycomb-cell::after {
-  background: #3ea0eb;
+  background: #3e3f43;
   opacity: 0.5;
   transition: opacity 350ms;
 }
@@ -238,4 +238,12 @@ body {
 }
 a {
   text-decoration: none;
+}
+.copyright {
+  color: red;
+    background: whitesmoke;
+    padding: 0.5rem;
+    font-weight: 800;
+    font-family: inherit;
+    font-size: 1.4rem;
 }
